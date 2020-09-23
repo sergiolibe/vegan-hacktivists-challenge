@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 
+use App\Factory\QuestionFactory;
 use App\Models\Question;
 use App\Repository\IAnswerRepository;
 use App\Repository\IQuestionRepository;
+use Exception;
 use Throwable;
 
 class QuestionService
@@ -27,7 +29,10 @@ class QuestionService
      */
     public function insert(Question $question): bool
     {
-        $this->questionRepository->insert($question);
+        if( substr($question->getText(),-1) !== '?')
+            throw new Exception('Your question must end with a \'?\'');
+
+        return $this->questionRepository->insert($question);
     }
 
     /** @return Question[] */
@@ -44,5 +49,10 @@ class QuestionService
     {
         $amountOfAnswers = $this->answerRepository->amountByQuestionId($question->getId());
         $question->setAmountOfAnswers($amountOfAnswers);
+    }
+
+    public function getRandomQuestion(): string
+    {
+        return QuestionFactory::generateQuestion();
     }
 }

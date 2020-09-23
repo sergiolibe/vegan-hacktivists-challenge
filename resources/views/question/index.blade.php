@@ -32,7 +32,7 @@
         <div class="col-12">
             <div class="form-group">
                 <textarea name="text" id="text" class="form-control" required rows="3"
-                          placeholder="randomQuestion"></textarea>
+                          placeholder="ask something meaningful">{{$randomQuestion}}</textarea>
             </div>
         </div>
 

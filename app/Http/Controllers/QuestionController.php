@@ -33,7 +33,12 @@ class QuestionController extends Controller
     public function index()
     {
         $questions = $this->questionService->getAll();
-        return view('question.index', ['questions' => $questions]);
+        $randomQuestion = $this->questionService->getRandomQuestion();
+        return view('question.index',
+            [
+                'questions' => $questions,
+                'randomQuestion' => $randomQuestion,
+            ]);
     }
 
     /**
@@ -55,22 +60,20 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'text' => 'required'
+            'text' => 'required|min:5'
         ]);
 
         $question = new Question($request->all());
 
         try {
-            $this->questionService->insert($question);
+            $success = $this->questionService->insert($question);
 
-            return redirect()->route('home');
+            return $success ?
+                redirect()->route('home') :
+                back()->withErrors(['Your question wasn\'t sumitted']);
+
         } catch (Throwable $e) {
-            //dd($e);
-            return
-                back()->withErrors([$e->getMessage().' <a href="google.com">clickme</a>']);
-                //return redirect()
-                //->route('home')
-                //->with('error', $e->getMessage());
+            return back()->withErrors([$e->getMessage()]);
         }
     }
 
