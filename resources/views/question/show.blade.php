@@ -34,7 +34,7 @@
         <div class="col-12">
             <div class="form-group">
                 <textarea name="text" id="text" class="form-control" required rows="3"
-                          placeholder="answer this question"></textarea>
+                          placeholder="answer this question">{{old('text')}}</textarea>
             </div>
         </div>
 
