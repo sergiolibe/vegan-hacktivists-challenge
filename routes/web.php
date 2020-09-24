@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\QuestionController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [QuestionController::class, 'index'])->name('home');
 
 Route::resource('question', QuestionController::class);
+Route::resource('question.answer', AnswerController::class);

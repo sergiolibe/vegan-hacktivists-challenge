@@ -11,20 +11,24 @@ class Answer extends Model
 {
     use HasFactory;
 
-    private string $text = '';
-
     /** @var array */
     protected $fillable = [
-        'text'
+        'text', 'question_id'
     ];
 
-    public function question(): BelongsTo
+    public function getId(): int
     {
-        return $this->belongsTo('App\Question');
+        return $this->id;
+    }
+
+    public function getQuestionId(): int
+    {
+        return (int)$this->question_id;
     }
 
     public function getText(): string
     {
         return $this->text;
     }
+
 }

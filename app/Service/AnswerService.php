@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Repository\IAnswerRepository;
+use Throwable;
 
 class AnswerService
 {
@@ -15,5 +16,15 @@ class AnswerService
     public function __construct(IAnswerRepository $answerRepository)
     {
         $this->answerRepository = $answerRepository;
+    }
+
+     /**
+     * @param Answer $answer
+     * @return bool
+     * @throws Throwable
+     */
+    public function insert(Answer $answer): bool
+    {
+        return $this->answerRepository->insert($answer);
     }
 }

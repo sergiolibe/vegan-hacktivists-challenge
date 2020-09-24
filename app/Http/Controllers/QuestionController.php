@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\QuestionAlreadyExistException;
+use App\Exceptions\QuestionTextBadFormattedException;
 use App\Models\Question;
 use App\Service\QuestionService;
 use Illuminate\Http\RedirectResponse;
@@ -70,28 +72,43 @@ class QuestionController extends Controller
 
             return $success ?
                 redirect()->route('home') :
-                back()->withErrors(['Your question wasn\'t sumitted']);
+                back()
+                    ->withInput(['text' => $request->get('text')])
+                    ->withErrors(['Your question wasn\'t submitted']);
 
+        } catch (QuestionAlreadyExistException $e) {
+            return back()
+                ->withInput(['text' => $request->get('text')])
+                ->withErrors([
+                'error' => $e->getMessage().
+                    '<a href="' . route('question.show', [$e->getQuestionId()]) . '"> (open)</a>'
+            ]);
         } catch (Throwable $e) {
-            return back()->withErrors([$e->getMessage()]);
+            return back()
+                ->withInput(['text' => $request->get('text')])
+                ->withErrors([$e->getMessage()]);
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Question $question
-     * @return Response
+     * @param int $questionId
+     * @return RedirectResponse|View
      */
-    public function show(Question $question)
+    public function show(int $questionId)
     {
-        //
+        $question = $this->questionService->findById($questionId);
+
+        return !is_null($question) ?
+            view('question.show', ['question' => $question]) :
+            redirect()->route('home');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Question $question
+     * @param Question $question
      * @return Response
      */
     public function edit(Question $question)
@@ -103,7 +120,7 @@ class QuestionController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param \App\Models\Question $question
+     * @param Question $question
      * @return Response
      */
     public function update(Request $request, Question $question)
@@ -114,7 +131,7 @@ class QuestionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Question $question
+     * @param Question $question
      * @return Response
      */
     public function destroy(Question $question)

@@ -11,7 +11,7 @@ class Question extends Model
 {
     use HasFactory;
 
-    private int $amountOfAnswers = 0;
+    private ?int $amountOfAnswers = null;
 
     /** @var array */
     protected $fillable = [
@@ -21,7 +21,7 @@ class Question extends Model
 
     public function answers(): HasMany
     {
-        return $this->hasMany('App\Answer');
+        return $this->hasMany(Answer::class)->orderBy('created_at');
     }
 
     public function getId(): int
@@ -36,7 +36,7 @@ class Question extends Model
 
     public function getAmountOfAnswers(): int
     {
-        return $this->amountOfAnswers;
+        return $this->amountOfAnswers ?? $this->answers()->count();
     }
 
     public function setAmountOfAnswers(int $amountOfAnswers): void

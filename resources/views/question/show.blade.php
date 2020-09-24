@@ -8,11 +8,12 @@
 
     <div class="col-lg-12">
         <div class="pull-left">
-            <h2>New Question</h2>
+            @php /** @var \App\Models\Question $question **/@endphp
+            <h2>{{$question->getText()}}</h2>
         </div>
-    <!--div class="pull-right">
+        <div class="pull-right">
             <a class="btn btn-dark" href="{{ route('question.index') }}"> Back</a>
-        </div-->
+        </div>
     </div>
 
     @if ($errors->any())
@@ -26,13 +27,14 @@
         </div>
     @endif
 
-    <form class="form-group mt-2" action="{{ route('question.store') }}" method="POST">
+    <form class="form-group mt-2" action="{{ route('question.answer.store',[ $question->getId() ]) }}" method="POST">
         @csrf
+
 
         <div class="col-12">
             <div class="form-group">
                 <textarea name="text" id="text" class="form-control" required rows="3"
-                          placeholder="ask something meaningful">{{old('text') ?? $randomQuestion}}</textarea>
+                          placeholder="answer this question"></textarea>
             </div>
         </div>
 
@@ -42,31 +44,29 @@
 
     </form>
 
-    <div class="mt-5 container">
-        <div class="row">
-            <div class="col-12">
-                <h2>Questions</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-5 container">
-
-        @php /** @var \App\Models\Question $question **/@endphp
-        @foreach($questions as $question)
+    @if($question->getAmountOfAnswers() > 0)
+        @foreach($question->answers as $answer)
             <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-                <h3 class="m-0">
+                <h4 class="m-0">
                     <a href="{{route('question.show',[$question->getId()])}}" class="text-dark">
-                        {{$question->getText()}}
+                        {{$answer->getText()}}
                     </a>
-                </h3>
+                </h4>
                 <div>
                     <span class="badge badge-primary">
-                        {{$question->getAmountOfAnswers()}} answers
+                        {{$answer->created_at}}
                     </span>
                 </div>
             </div>
         @endforeach
 
-    </div>
+    @else
+        <div class="mt-5 container">
+            <div class="row">
+                <div class="col-12">
+                    No answers yet! Be the first to answer by using the form.
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection

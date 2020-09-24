@@ -18,4 +18,6 @@ interface IQuestionRepository
 
     /** @return Question[] */
     public function all(): array;
+
+    public function find(int $id, bool $eagerLoad = false): ?Question;
 }

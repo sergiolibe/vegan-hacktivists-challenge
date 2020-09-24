@@ -35,6 +35,11 @@ class QuestionService
         return $this->questionRepository->insert($question);
     }
 
+    public function findById(int $id): ?Question
+    {
+        return $this->questionRepository->find($id, true);
+    }
+
     /** @return Question[] */
     public function getAll(): array
     {
